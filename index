@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>내 업무 노트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1f4;--panel:#fff;--ink:#1c2630;--mute:#66727f;--line:#d5dce3;--accent:#1f5f8b;--accent-ink:#fff;--soft:#e3edf5;--today:#fff1b8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12171d;--panel:#1b222b;--ink:#e6ebf0;--mute:#93a0ad;--line:#2c3641;--accent:#6fb0e0;--accent-ink:#0d1620;--soft:#1f2d3a;--today:#4a3f12;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12171d;--panel:#1b222b;--ink:#e6ebf0;--mute:#93a0ad;--line:#2c3641;--accent:#6fb0e0;--accent-ink:#0d1620;--soft:#1f2d3a;--today:#4a3f12;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.6 "Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--panel);z-index:10}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--panel);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;padding:10px 20px;flex-wrap:wrap}
+header h1{font-size:18px;margin:0;font-weight:700}
+nav.tabs{display:flex;gap:4px;flex:1}
+nav.tabs button{border:0;background:none;color:var(--mute);font:inherit;font-weight:500;padding:8px 16px;border-radius:8px;cursor:pointer}
+nav.tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+.tools{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:13px}
+button{font:inherit;color:inherit}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.btn{border:1px solid var(--line);background:var(--panel);padding:6px 12px;border-radius:8px;cursor:pointer}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+main{max-width:1040px;margin:0 auto;padding:20px}
+.nav{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.nav h2{margin:0;font-size:22px;font-weight:700}
+.nav .sp{flex:1}
+.nav button.arrow{width:36px;height:36px;border:1px solid var(--line);background:var(--panel);border-radius:8px;cursor:pointer;font-size:18px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+.panel h3{margin:0 0 8px;font-size:15px;font-weight:700}
+textarea,input[type=text],input[type=date],select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px}
+textarea{resize:vertical;display:block;line-height:1.5;overflow:hidden}
+select{width:auto;padding:4px 6px}
+.months{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.months .panel{margin:0}
+.mini.cur{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.link{border:0;background:none;padding:0;font-weight:700;cursor:pointer;color:var(--accent)}
+ul.tasks{list-style:none;margin:0 0 10px;padding:0}
+ul.tasks li{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--line)}
+ul.tasks label{flex:1;display:flex;gap:8px;align-items:center;cursor:pointer}
+ul.tasks .done{text-decoration:line-through;color:var(--mute)}
+.x{border:0;background:none;color:var(--mute);cursor:pointer;font-size:18px;line-height:1}
+.add{display:flex;gap:8px}
+.cal{overflow-x:auto}
+.calgrid{display:grid;grid-template-columns:repeat(7,1fr);min-width:700px;gap:4px}
+.dow{text-align:center;color:var(--mute);font-size:13px;padding:4px}
+.cell{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px;min-height:92px}
+.cell.blank{background:none;border:0}
+.cell.today{background:var(--today)}
+.cell textarea{background:transparent;border:0;padding:2px;font-size:13px;min-height:52px}
+.dn{border:0;background:none;cursor:pointer;font-weight:700;padding:2px 4px;border-radius:4px}
+.dn:hover{background:var(--soft)}
+.dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-left:4px;vertical-align:middle}
+.sun{color:#c0392b}.sat{color:var(--accent)}
+.hours{display:grid;grid-template-columns:110px 1fr;gap:6px 10px;align-items:start}
+.hours label{color:var(--mute);font-size:13px;padding-top:9px;font-variant-numeric:tabular-nums}
+.range{display:flex;gap:8px;align-items:center;color:var(--mute);font-size:13px;margin-top:10px}
+#bk{display:none}
+#bk.open{display:block}
+@media (max-width:640px){main{padding:12px}header{padding:8px 12px}.hours{grid-template-columns:84px 1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>내 업무 노트</h1>
+  <nav class="tabs" role="tablist" aria-label="업무 계획 탭">
+    <button role="tab" data-tab="annual">연간 계획</button>
+    <button role="tab" data-tab="monthly">월간 계획</button>
+    <button role="tab" data-tab="daily">일일 업무</button>
+  </nav>
+  <div class="tools"><span id="saved" aria-live="polite">자동 저장</span><button class="btn" data-a="backup">백업·복원</button></div>
+</header>
+<main>
+  <section id="bk" class="panel">
+    <h3>백업·복원</h3>
+    <p style="margin:0 0 8px;color:var(--mute);font-size:13px">내용은 이 브라우저에만 저장됩니다. 아래 텍스트를 복사해 메모장에 보관해 두면, 다른 PC나 브라우저에서 붙여넣어 복원할 수 있어요.</p>
+    <textarea id="bkText" rows="5"></textarea>
+    <div style="display:flex;gap:8px;margin-top:8px"><button class="btn" data-a="copy">복사하기</button><button class="btn pri" data-a="restore">이 내용으로 복원 (현재 데이터를 덮어씀)</button><span id="bkMsg" style="color:var(--mute);font-size:13px;align-self:center"></span></div>
+  </section>
+  <div id="view"></div>
+</main>
+<script>
+const KEY='workplanner.v1';
+let S={annual:{},monthly:{},daily:{},settings:{start:9,end:18}};
+try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const ds=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parse=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const DOW=['일','월','화','수','목','금','토'];
+const now=new Date();
+let tab='daily',year=now.getFullYear(),ym=year+'-'+pad(now.getMonth()+1),day=ds(now);
+let timer;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));$('#saved').textContent='저장됨'}catch(e){$('#saved').textContent='저장 불가 (백업을 사용하세요)'}}
+function queueSave(){$('#saved').textContent='저장 중…';clearTimeout(timer);timer=setTimeout(save,400)}
+function v(p){let o=S;for(const k of p.split('|')){o=o&&o[k]}return o==null?'':o}
+function setPath(p,val){const a=p.split('|');let o=S;for(let i=0;i<a.length-1;i++){o=o[a[i]]||(o[a[i]]={})}o[a[a.length-1]]=val}
+const ta=(p,ph,rows)=>'<textarea data-p="'+p+'" placeholder="'+ph+'" rows="'+rows+'">'+esc(v(p))+'</textarea>';
+const grow=el=>{el.style.height='auto';el.style.height=(el.scrollHeight+2)+'px'};
+
+function annual(){
+  const y=year;
+  let h='<div class="nav"><button class="arrow" data-a="y-" aria-label="이전 해">‹</button><h2>'+y+'년 업무 계획</h2><button class="arrow" data-a="y+" aria-label="다음 해">›</button></div>';
+  h+='<section class="panel"><h3>올해 목표</h3>'+ta('annual|'+y+'|goal','올해 꼭 이루고 싶은 업무 목표를 적어 보세요',4)+'</section><div class="months">';
+  for(let m=1;m<=12;m++){
+    const cur=(y===now.getFullYear()&&m===now.getMonth()+1)?' cur':'';
+    h+='<section class="panel mini'+cur+'"><h3><button class="link" data-gom="'+y+'-'+pad(m)+'">'+m+'월</button></h3>'+ta('annual|'+y+'|m|'+m,'이 달의 주요 계획',5)+'</section>';
+  }
+  return h+'</div>';
+}
+
+function monthly(){
+  const [y,m]=ym.split('-').map(Number);
+  const rec=S.monthly[ym]||{};const tasks=rec.tasks||[];
+  let h='<div class="nav"><button class="arrow" data-a="m-" aria-label="이전 달">‹</button><h2>'+y+'년 '+m+'월</h2><button class="arrow" data-a="m+" aria-label="다음 달">›</button><span class="sp"></span><button class="btn" data-a="thismonth">이번 달</button></div>';
+  h+='<section class="panel"><h3>이달의 목표</h3>'+ta('monthly|'+ym+'|goal','이번 달에 끝내야 할 핵심 업무',3)+'</section>';
+  h+='<section class="panel"><h3>이달의 할 일</h3><ul class="tasks">'+tasks.map((t,i)=>'<li><label><input type="checkbox" data-tk="'+i+'"'+(t.done?' checked':'')+'><span class="'+(t.done?'done':'')+'">'+esc(t.t)+'</span></label><button class="x" data-rm="'+i+'" aria-label="삭제">×</button></li>').join('')+'</ul>';
+  h+='<div class="add"><input type="text" id="newtask" placeholder="할 일을 입력하고 Enter"><button class="btn pri" data-a="addtask">추가</button></div></section>';
+  const first=new Date(y,m-1,1).getDay(),n=new Date(y,m,0).getDate(),today=ds(now);
+  h+='<section class="panel"><h3>월간 달력</h3><div class="cal"><div class="calgrid">';
+  DOW.forEach((d,i)=>{h+='<div class="dow '+(i===0?'sun':i===6?'sat':'')+'">'+d+'</div>'});
+  for(let i=0;i<first;i++)h+='<div class="cell blank"></div>';
+  for(let d=1;d<=n;d++){
+    const k=ym+'-'+pad(d);const dr=S.daily[k];
+    const has=dr&&dr.hours&&Object.values(dr.hours).some(x=>x&&x.trim());
+    const wd=(first+d-1)%7;
+    h+='<div class="cell'+(k===today?' today':'')+'"><button class="dn '+(wd===0?'sun':wd===6?'sat':'')+'" data-go="'+k+'" title="이 날의 일일 업무 열기">'+d+(has?'<span class="dot"></span>':'')+'</button><textarea data-p="monthly|'+ym+'|days|'+k+'" rows="2" aria-label="'+m+'월 '+d+'일 메모">'+esc(v('monthly|'+ym+'|days|'+k))+'</textarea></div>';
+  }
+  return h+'</div></div><p style="margin:8px 0 0;color:var(--mute);font-size:13px">날짜를 누르면 그날의 일일 업무로 이동합니다. 파란 점은 시간별 기록이 있는 날입니다.</p></section>';
+}
+
+function daily(){
+  const d=parse(day),{start,end}=S.settings;
+  let h='<div class="nav"><button class="arrow" data-a="d-" aria-label="전날">‹</button><input type="date" id="datepick" value="'+day+'" style="width:auto" aria-label="날짜 선택"><button class="arrow" data-a="d+" aria-label="다음날">›</button><button class="btn" data-a="today">오늘</button></div>';
+  h+='<h2 style="margin:0 0 14px;font-size:22px">'+d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일 '+DOW[d.getDay()]+'요일</h2>';
+  h+='<section class="panel"><h3>오늘 가장 중요한 일</h3>'+ta('daily|'+day+'|top','오늘 반드시 끝낼 일 1~3가지',2)+'</section>';
+  h+='<section class="panel"><h3>시간별 기록</h3><div class="hours">';
+  for(let t=start;t<end;t++){
+    h+='<label for="h'+t+'">'+pad(t)+':00 – '+pad(t+1)+':00</label><textarea id="h'+t+'" rows="1" data-p="daily|'+day+'|hours|'+t+'" placeholder="이 시간에 한 일">'+esc(v('daily|'+day+'|hours|'+t))+'</textarea>';
+  }
+  h+='</div><div class="range">기록 시간대 <select id="st">'+opts(0,23,start)+'</select>시부터 <select id="en">'+opts(1,24,end)+'</select>시까지</div></section>';
+  h+='<section class="panel"><h3>마무리 메모 · 내일 할 일</h3>'+ta('daily|'+day+'|memo','미처리 업무, 내일 이어서 할 일, 공유할 내용',3)+'</section>';
+  return h;
+}
+function opts(a,b,sel){let s='';for(let i=a;i<=b;i++)s+='<option value="'+i+'"'+(i===sel?' selected':'')+'>'+pad(i)+'</option>';return s}
+
+function render(){
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));
+  $('#view').innerHTML={annual,monthly,daily}[tab]();
+  document.querySelectorAll('#view textarea').forEach(grow);
+}
+function shiftDay(n){const d=parse(day);d.setDate(d.getDate()+n);day=ds(d)}
+function shiftMonth(n){const [y,m]=ym.split('-').map(Number);const d=new Date(y,m-1+n,1);ym=d.getFullYear()+'-'+pad(d.getMonth()+1)}
+
+document.addEventListener('input',e=>{
+  const el=e.target;
+  if(el.dataset&&el.dataset.p){setPath(el.dataset.p,el.value);grow(el);queueSave()}
+});
+document.addEventListener('change',e=>{
+  const el=e.target;
+  if(el.dataset&&el.dataset.tk!==undefined){S.monthly[ym].tasks[+el.dataset.tk].done=el.checked;save();render()}
+  else if(el.id==='datepick'&&el.value){day=el.value;render()}
+  else if(el.id==='st'||el.id==='en'){
+    let a=+$('#st').value,b=+$('#en').value;
+    if(b<=a){if(el.id==='st')b=a+1;else a=b-1}
+    S.settings={start:Math.max(0,a),end:Math.min(24,b)};save();render();
+  }
+});
+document.addEventListener('keydown',e=>{if(e.target.id==='newtask'&&e.key==='Enter'){e.preventDefault();addTask()}});
+function addTask(){
+  const i=$('#newtask');const t=i.value.trim();if(!t)return;
+  const r=S.monthly[ym]||(S.monthly[ym]={});(r.tasks||(r.tasks=[])).push({t,done:false});save();render();$('#newtask').focus();
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  const D=b.dataset;
+  if(D.tab){tab=D.tab;render();return}
+  if(D.go){day=D.go;tab='daily';render();window.scrollTo(0,0);return}
+  if(D.gom){ym=D.gom;tab='monthly';render();window.scrollTo(0,0);return}
+  if(D.rm!==undefined){S.monthly[ym].tasks.splice(+D.rm,1);save();render();return}
+  switch(D.a){
+    case'y-':year--;render();break;
+    case'y+':year++;render();break;
+    case'm-':shiftMonth(-1);render();break;
+    case'm+':shiftMonth(1);render();break;
+    case'thismonth':ym=now.getFullYear()+'-'+pad(now.getMonth()+1);render();break;
+    case'd-':shiftDay(-1);render();break;
+    case'd+':shiftDay(1);render();break;
+    case'today':day=ds(now);render();break;
+    case'addtask':addTask();break;
+    case'backup':{const o=$('#bk').classList.toggle('open');if(o){$('#bkText').value=JSON.stringify(S);$('#bkMsg').textContent=''}break}
+    case'copy':{
+      const t=$('#bkText');t.select();
+      (navigator.clipboard?navigator.clipboard.writeText(t.value):Promise.reject()).then(()=>{$('#bkMsg').textContent='복사했습니다'}).catch(()=>{try{document.execCommand('copy');$('#bkMsg').textContent='복사했습니다'}catch(_){$('#bkMsg').textContent='텍스트를 직접 선택해 복사하세요'}});
+      break}
+    case'restore':{
+      try{const o=JSON.parse($('#bkText').value);if(!o||typeof o!=='object'||!o.daily)throw 0;
+        S=Object.assign({annual:{},monthly:{},daily:{},settings:{start:9,end:18}},o);save();render();$('#bkMsg').textContent='복원했습니다'}
+      catch(_){$('#bkMsg').textContent='형식이 올바르지 않습니다. 백업 텍스트 전체를 붙여넣어 주세요'}
+      break}
+  }
+});
+render();
+</script>
+</body>
+</html>
